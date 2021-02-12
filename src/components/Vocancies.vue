@@ -18,7 +18,6 @@
         <td>{{ v.salaryFrom.toLocaleString("ru") }}</td>
         <td>{{ new Date(Date(v.dateOpen)).toLocaleString("ru") }}</td>
       </tr>
-      <tr>{{  }}</tr>
     </table>
   </div>
 </template>
