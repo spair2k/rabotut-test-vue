@@ -18,6 +18,7 @@
         <td>{{ v.salaryFrom.toLocaleString("ru") }}</td>
         <td>{{ new Date(Date(v.dateOpen)).toLocaleString("ru") }}</td>
       </tr>
+      <tr>{{  }}</tr>
     </table>
   </div>
 </template>
@@ -48,7 +49,9 @@ export default {
   name: "Vacancies",
   data() {
     return {
-      range: [10,20,40,60,0],
+      paging: [10,20,40,60,0],
+      onPage: 0,
+      sortBy: '',
     };
   },
   apollo: {
