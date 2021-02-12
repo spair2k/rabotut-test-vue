@@ -48,7 +48,9 @@ export default {
   name: "Vacancies",
   data() {
     return {
-      range: [10,20,40,60,0],
+      paging: [10,20,40,60,0],
+      onPage: 0,
+      sortBy: '',
     };
   },
   apollo: {
