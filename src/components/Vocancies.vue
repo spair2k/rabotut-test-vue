@@ -1,6 +1,7 @@
 <template>
   <div>
     <h2>This is my first GraphQL Clinet by Vue</h2>
+    <div v-if="$apollo.queries.vacancies.loading" class="msg msg__loading">Loading...</div>
     <table border="1">
       <tr>
         <th>#(id)</th>
@@ -19,6 +20,7 @@
         <td>{{ new Date(Date(v.dateOpen)).toLocaleString("ru") }}</td>
       </tr>
     </table>
+    <div v-if="error" class="msg msg__error">{{ error }}</div>
   </div>
 </template>
 
@@ -51,11 +53,16 @@ export default {
       paging: [10,20,40,60,0],
       onPage: 0,
       sortBy: '',
+      vacancies: [],
+      error: null,
     };
   },
   apollo: {
     vacancies: {
       query: GET_VACANCIES,
+      error(error) {
+        this.error = JSON.stringify(error.message);
+      },
     },
   },
 };
