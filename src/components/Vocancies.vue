@@ -1,38 +1,33 @@
 <template>
-  <div class="vacancies">
-    <h2 class="vacancies__h2">This is my first GraphQL Clinet by Vue</h2>
-    <div 
-      v-if="$apollo.queries.vacancies.loading" 
-      class="vacancies__msg vacancies__msg--loading"
+  <v-container class="vacancies">
+    <v-data-table
+      :calculate-widths="true"
+      :hide-default-footer="true"
+      caption="Список ваканский"
+      :headers="headers"
+      :items="vacancies"
+      :items-per-page="onPage"
+      :loading="$apollo.queries.vacancies.loading"
+      loading-text="Загрузка..."
+      class="vacancies__table"
     >
-      <span>Загрузка...</span>
-    </div>
-    <div v-else-if="$apollo.queries.vacancies.data">
-      <table class="vacancies__table">
-        <caption>Вакансии - <a href="https://rabotut.com/">rabotut.com</a></caption>
-        <thead class="vacancies__table--row vacancies__table--row-header">
-          <th class="vacancies__table--cell">#(id)</th>
-          <th class="vacancies__table--cell">Position</th>
-          <th class="vacancies__table--cell">Description</th>
-          <th class="vacancies__table--cell">Address</th>
-          <th class="vacancies__table--cell">Salary from</th>
-          <th class="vacancies__table--cell">Date open</th>
-        </thead>
-        <tbody v-for="( v, i ) in vacancies" :key="v.ID" class="vacancies__table--row vacancies__table--row-body">
-          <td class="vacancies__table--cell">{{ i+1 }}({{ v.ID }})</td>
-          <td class="vacancies__table--cell">{{ v.position.text }}</td>
-          <td class="vacancies__table--cell">{{ v.description }}</td>
-          <td class="vacancies__table--cell">{{ v.Address.city }}</td>
-          <td class="vacancies__table--cell">{{ v.salaryFrom.toLocaleString("ru") }}</td>
-          <td class="vacancies__table--cell">{{ new Date(Date(v.dateOpen)).toLocaleString("ru") }}</td>
-        </tbody>
-        <tfoot class="vacancies__table--row vacancies__table--row-footer">
-          <td></td>
-        </tfoot>
-      </table>
+    <template v-slot:item.dateOpen="{ item }">
+      <span>{{ new Date(Date(item.dateOpen)).toLocaleString('ru',{
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric'
+      }) }}</span>
+    </template>
+    </v-data-table>
+    <div class="text-center pt-2">
+      <v-select
+        :items='paging'
+        v-model='onPage'
+        label='Строк на страницу'
+      />
     </div>
     <div v-if="error" class="vacancies__msg vacancies__msg--error"><span>{{ error }}</span></div>
-  </div>
+  </v-container>
 </template>
 
 <script>
@@ -61,8 +56,22 @@ export default {
   name: "Vacancies",
   data() {
     return {
-      paging: [10,20,40,60,0],
-      onPage: 0,
+      headers: [
+        { text: 'ID', value: 'ID' },
+        { text: 'Должность', value: 'position.text' },
+        { text: 'Описание', value: 'description' },
+        { text: 'Город', value: 'Address.city' },
+        { text: 'Зарплата от', value: 'salaryFrom' },
+        { text: 'Дата размещения', value: 'dateOpen', width: '1' },
+      ],
+      paging: [
+        {text:'10', value: 10},
+        {text:'20', value: 20},
+        {text:'40', value: 40},
+        {text:'60', value: 60},
+        {text:'Все', value: -1}
+      ],
+      onPage: 10,
       sortBy: '',
       vacancies: [],
       error: null,

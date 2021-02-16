@@ -5,6 +5,7 @@ import { InMemoryCache } from "apollo-cache-inmemory";
 
 import App from "./App.vue";
 import VueApollo from "vue-apollo";
+import vuetify from './plugins/vuetify';
 
 const apolloClient = new ApolloClient({
   link: new HttpLink({
@@ -24,5 +25,6 @@ new Vue({
       $loadingKey: "loading"
     }
   }).provide(),
+  vuetify,
   render: (h) => h(App)
 }).$mount("#app");
