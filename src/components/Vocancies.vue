@@ -1,26 +1,37 @@
 <template>
-  <div>
-    <h2>This is my first GraphQL Clinet by Vue</h2>
-    <div v-if="$apollo.queries.vacancies.loading" class="msg msg__loading">Loading...</div>
-    <table border="1">
-      <tr>
-        <th>#(id)</th>
-        <th>Position</th>
-        <th>Description</th>
-        <th>Address</th>
-        <th>Salary from</th>
-        <th>Date open</th>
-      </tr>
-      <tr v-for="( v, i ) in vacancies" :key="v.ID">
-        <td>{{ i+1 }}({{ v.ID }})</td>
-        <td>{{ v.position.text }}</td>
-        <td>{{ v.description }}</td>
-        <td>{{ v.Address.city }}</td>
-        <td>{{ v.salaryFrom.toLocaleString("ru") }}</td>
-        <td>{{ new Date(Date(v.dateOpen)).toLocaleString("ru") }}</td>
-      </tr>
-    </table>
-    <div v-if="error" class="msg msg__error">{{ error }}</div>
+  <div class="vacancies">
+    <h2 class="vacancies__h2">This is my first GraphQL Clinet by Vue</h2>
+    <div 
+      v-if="$apollo.queries.vacancies.loading" 
+      class="vacancies__msg vacancies__msg--loading"
+    >
+      <span>Загрузка...</span>
+    </div>
+    <div v-else-if="$apollo.queries.vacancies.data">
+      <table class="vacancies__table">
+        <caption>Вакансии - <a href="https://rabotut.com/">rabotut.com</a></caption>
+        <thead class="vacancies__table--row vacancies__table--row-header">
+          <th class="vacancies__table--cell">#(id)</th>
+          <th class="vacancies__table--cell">Position</th>
+          <th class="vacancies__table--cell">Description</th>
+          <th class="vacancies__table--cell">Address</th>
+          <th class="vacancies__table--cell">Salary from</th>
+          <th class="vacancies__table--cell">Date open</th>
+        </thead>
+        <tbody v-for="( v, i ) in vacancies" :key="v.ID" class="vacancies__table--row vacancies__table--row-body">
+          <td class="vacancies__table--cell">{{ i+1 }}({{ v.ID }})</td>
+          <td class="vacancies__table--cell">{{ v.position.text }}</td>
+          <td class="vacancies__table--cell">{{ v.description }}</td>
+          <td class="vacancies__table--cell">{{ v.Address.city }}</td>
+          <td class="vacancies__table--cell">{{ v.salaryFrom.toLocaleString("ru") }}</td>
+          <td class="vacancies__table--cell">{{ new Date(Date(v.dateOpen)).toLocaleString("ru") }}</td>
+        </tbody>
+        <tfoot class="vacancies__table--row vacancies__table--row-footer">
+          <td></td>
+        </tfoot>
+      </table>
+    </div>
+    <div v-if="error" class="vacancies__msg vacancies__msg--error"><span>{{ error }}</span></div>
   </div>
 </template>
 
