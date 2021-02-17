@@ -1,8 +1,12 @@
 import Vue from 'vue'
 import Vuetify from 'vuetify/lib'
+import ru from 'vuetify/src/locale/ru.ts';
 
 Vue.use(Vuetify)
 
-const opts = {}
-
-export default new Vuetify(opts)
+export default new Vuetify({
+    lang: {
+        locales: { ru },
+        current: 'ru'
+    }
+})

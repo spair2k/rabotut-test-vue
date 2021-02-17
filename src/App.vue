@@ -1,64 +1,61 @@
 <template>
-  <v-app>
-    <!-- <v-app-bar
-      app
-      color="primary"
-      dark
+  <v-app id="inspire">
+    <v-card 
+      class="mx-auto owerflow-hidden" 
+      width="97%"
+      min-height="500" 
+      :dark="dark"
     >
-      <div class="d-flex align-center">
-        <v-img
-          alt="Vuetify Logo"
-          class="shrink mr-2"
-          contain
-          src="https://cdn.vuetifyjs.com/images/logos/vuetify-logo-dark.png"
-          transition="scale-transition"
-          width="40"
-        />
-
-        <v-img
-          alt="Vuetify Name"
-          class="shrink mt-1 hidden-sm-and-down"
-          contain
-          min-width="100"
-          src="https://cdn.vuetifyjs.com/images/logos/vuetify-name-dark.png"
-          width="100"
-        />
-      </div>
-
-      <v-spacer></v-spacer>
-
-      <v-btn
-        href="https://github.com/vuetifyjs/vuetify/releases/latest"
-        target="_blank"
-        text
+      <v-app-bar>
+        <v-app-bar-nav-icon @click="drawer = true"></v-app-bar-nav-icon>
+        <v-toolbar-title>Список ваканский</v-toolbar-title>
+      </v-app-bar>
+      <v-navigation-drawer
+        v-model="drawer"
+        absolute
+        temporary
       >
-        <span class="mr-2">Latest Release</span>
-        <v-icon>mdi-open-in-new</v-icon>
-      </v-btn>
-    </v-app-bar> -->
-
-    <v-main>
-      <!-- <HelloWorld/> -->
-      <Vocancies/>
-    </v-main>
+        <v-list nav>
+          <v-list-item-group
+            v-model="group"
+          >
+            <v-list-group
+              :value="true"
+              prepend-icon="mdi-tune-variant"
+            >
+              <template v-slot:activator>
+                <v-list-item-title>Настройки</v-list-item-title>
+              </template>
+              <!-- items -->
+              <v-switch v-model="dark" label="Темная тема"/>
+              <!-- /items -->
+            </v-list-group>
+          </v-list-item-group>
+        </v-list>
+      </v-navigation-drawer>
+      
+      <v-main>
+        <Vocancies/>
+      </v-main>
+    </v-card>
   </v-app>
 </template>
 
 <script>
-// import HelloWorld from './components/HelloWorld';
 import Vocancies from './components/Vocancies';
-
 
 export default {
   name: 'App',
 
   components: {
-    // HelloWorld,
     Vocancies
   },
 
   data: () => ({
-    //
+    drawer: false,
+    dark: false,
+    color: "blue",
+    group: null
   }),
 };
 </script>
