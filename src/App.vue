@@ -2,9 +2,10 @@
   <v-app id="inspire">
     <v-card 
       class="mx-auto owerflow-hidden" 
-      width="97%"
+      width="100%"
       min-height="500" 
       :dark="dark"
+      tile
     >
       <v-app-bar>
         <v-app-bar-nav-icon @click="drawer = true"></v-app-bar-nav-icon>

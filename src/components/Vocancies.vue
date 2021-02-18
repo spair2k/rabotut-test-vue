@@ -5,39 +5,72 @@
         <v-container>
           <v-col>
             <v-row dense>
-              <v-col sm="3">
+              <v-col>
                 <v-text-field
                   v-model="position"
-                  append-icon="mdi-briefcase-account-outline"
+                  prepend-icon="mdi-briefcase-account-outline"
                   label="Должность"
                   hide-details
+                  clearable
                 ></v-text-field>
               </v-col>
-              <v-col sm="3">
+              <v-col>
                 <v-text-field
                   v-model="city"
-                  append-icon="mdi-city-variant-outline"
+                  prepend-icon="mdi-city-variant-outline"
                   label="Город"
                   hide-details
+                  clearable
                 ></v-text-field>
               </v-col>
-              <v-col sm="3">
+              <v-col>
+                <v-menu
+                  v-model="menu1"
+                  :close-on-content-click="false"
+                  :nudge-right="40"
+                  transition="scale-transition"
+                  offset-y
+                  min-width="auto"
+                >
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-text-field
+                      :value="getLocaleDate(dateOpen)"
+                      label="Размещено от"
+                      prepend-icon="mdi-calendar"
+                      clearable
+                      readonly
+                      v-bind="attrs"
+                      v-on="on"
+                    ></v-text-field>
+                  </template>
+                  <v-date-picker
+                    v-model="dateOpen"
+                    @input="menu1 = false"
+                    first-day-of-week="1"
+                  ></v-date-picker>
+                </v-menu>
+              </v-col>
+              <v-col>
                 <v-text-field
                   v-model="salaryFrom"
-                  append-icon="mdi-currency-rub"
+                  prepend-icon="mdi-currency-rub"
                   label="Зарплата от"
                   hide-details
                   type="number"
                   step="500"
+                  min="0"
+                  clearable
                 ></v-text-field>
               </v-col>
-              <v-col sm="3">
-                <v-text-field
-                  v-model="dateOpen"
-                  append-icon="mdi-calendar"
-                  label="Размещено от"
-                  hide-details
-                ></v-text-field>
+              <v-col>
+                <v-select
+                  :items="headers"
+                  v-model="sortBy"
+                  label="Сортировать по"
+                  :prepend-icon="sortDesc?'mdi-sort-variant':'mdi-sort-reverse-variant'"
+                  @click:prepend="sortDesc = !sortDesc"
+                  clearable
+                />
               </v-col>
             </v-row>
           </v-col>
@@ -49,28 +82,19 @@
         :items="getFiltered"
         :loading="$apollo.queries.vacancies.loading"
         loading-text="Загрузка..."
-        :header-props="headerProps"
+        :header-props="{ sortIcon: null }"
         :footer-props="footerProps"
         :sort-by.sync="sortBy"
         :sort-desc.sync="sortDesc"
       >
-      <template v-slot:item.ID="{ item }">
-        <span>{{ positionIndex( item ) }}</span>
-      </template>
-      <template v-slot:item.dateOpen="{ item }">
-        <span>{{ 
-          new Date(Date(item.dateOpen)).toLocaleString('ru',{
-              day: 'numeric',
-              month: 'short',
-              year: 'numeric'
-            }) 
-          }}
-        </span>
-      </template>
+        <template v-slot:item.ID="{ item }">
+          <span>{{ positionIndex( item ) }}</span>
+        </template>
+        <template v-slot:item.dateOpen="{ item }">
+          <span>{{ getLocaleDate(item.dateOpen) }}</span>
+        </template>
       </v-data-table>
-
     </div>
-    <!-- <div v-if="error" class="vacancies__msg vacancies__msg--error"><span>{{ error }}</span></div> -->
     <v-alert
       v-if="error"
       type="error"
@@ -80,7 +104,9 @@
 </template>
 
 <script>
-import gql from "graphql-tag";
+import gql from 'graphql-tag'
+import Moment from 'moment'
+import 'moment/locale/ru'
 
 const GET_VACANCIES = gql`
   query {
@@ -115,37 +141,36 @@ const GET_VACANCIES = gql`
         houses
       }
     }
-  }`;
+  }`
 
 export default {
-  name: "Vacancies",
-  data() {
-    return {
-      headers: [
-        { text: '№', value: 'ID' },
-        { text: 'Работодатель', value: 'employer.text'},
-        { text: 'Должность', value: 'position.text' },
-        { text: 'Описание', value: 'description' },
-        { text: 'Город', value: 'Address.city' },
-        { text: 'Зарплата от', value: 'salaryFrom', width: '10%' },
-        { text: 'Дата размещения', value: 'dateOpen', width: '10%' },
-      ],
-      headerProps: {
-        'disable-sort': true,
-      },
-      footerProps: {
-        'items-per-page-options': [5, 10, 20, 40, 60, -1],
-      },
-      vacancies: [],
-      salaryFrom: null,
-      city: null,
-      dateOpen: null,
-      error: null,
-      position: '',
-      sortBy: 'dateOpen',
-      sortDesc: null,
-    };
-  },
+  name: 'Vacancies',
+  data: () => ({
+    headers: [
+      { text: '№', value: 'ID' },
+      { text: 'Работодатель', value: 'employer.text' },
+      { text: 'Должность', value: 'position.text' },
+      { text: 'Занятость', value: 'typeEmployment.text' },
+      { text: 'Город', value: 'Address.city' },
+      { text: 'Зарплата от', value: 'salaryFrom' },
+      { text: 'Дата размещения', value: 'dateOpen' },
+    ],
+    headerProps: {
+      'disable-sort': true,
+    },
+    footerProps: {
+      'items-per-page-options': [5, 10, 20, 40, 60, -1],
+    },
+    vacancies: [],
+    salaryFrom: null,
+    city: null,
+    dateOpen: null,
+    menu1: false,
+    error: null,
+    position: '',
+    sortBy: '',
+    sortDesc: false,
+  }),
   computed: {
     getFiltered() {
       return this.vacancies.filter(f => {
@@ -153,13 +178,27 @@ export default {
       }).filter(f => {
         return this.city == null || f.Address.city.toUpperCase().includes(this.city.toUpperCase())
       }).filter(f => {
-        return this.salaryFrom == null || f.salaryFrom >= this.salaryFrom
+        return this.salaryFrom == null || f.salaryFrom >= (parseInt(this.salaryFrom) >= 0?parseInt(this.salaryFrom):0)
+      }).filter(f => {
+        return this.dateOpen == null || f.dateOpen >= this.dateOpen
       })
     }
   },
   methods: {
     positionIndex(i) {
       return this.vacancies.map( (x) => {return x.ID}).indexOf(i.ID)+1
+    },
+    formatDate (date) {
+      if (!date) return null
+
+      const [year, month, day] = date.split('-')
+      return `${month}/${day}/${year}`
+    },
+    getLocaleDate(date) {
+      if (date) {
+        let dt = String(date).split(' ')[0]
+        return Moment(dt).format('DD.MM.YYYY')
+      }
     }
   },
   apollo: {
@@ -170,7 +209,7 @@ export default {
       },
     },
   },
-};
+}
 </script>
 
 <style scoped>
