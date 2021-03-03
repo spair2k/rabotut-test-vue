@@ -2,12 +2,13 @@
 
 ## 1. What is this
 
-This task is a test to prooving skills for junior front-end developer vacancy
+This task for testing QraphQL and Vuejs frameworks integration using Vuetify UI components.
 
-The following key technologies were used in this project:
+The following key technologies was used in this project:
 - HTML5
 - CSS3
 - JavaScript
 - GraphQL
-- Vue.js framework
+- Vue.js
 - Vuetify
+- Webpack
